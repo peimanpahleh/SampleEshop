@@ -1,0 +1,66 @@
+{
+	"Routes": [
+		{
+			"DownstreamPathTemplate": "/api/{everything}",
+			"DownstreamScheme": "http",
+			"ServiceName": "product",
+			"LoadBalancerOptions": {
+				"Type": "LeastConnection"
+			},
+			"UpstreamPathTemplate": "/products/api/{everything}"
+		},
+		{
+			"DownstreamPathTemplate": "/{everything}",
+			"UpstreamPathTemplate": "/products-doc/{everything}",
+			"DownstreamScheme": "http",
+			"ServiceName": "product",
+			"LoadBalancerOptions": {
+				"Type": "LeastConnection"
+			}
+		},
+		{
+			"DownstreamPathTemplate": "/api/{everything}",
+			"DownstreamScheme": "http",
+			"ServiceName": "basket",
+			"LoadBalancerOptions": {
+				"Type": "LeastConnection"
+			},
+			"UpstreamPathTemplate": "/baskets/api/{everything}"
+		},
+		{
+			"DownstreamPathTemplate": "/{everything}",
+			"UpstreamPathTemplate": "/baskets-doc/{everything}",
+			"DownstreamScheme": "http",
+			"ServiceName": "basket",
+			"LoadBalancerOptions": {
+				"Type": "LeastConnection"
+			}
+		},
+		{
+			"DownstreamPathTemplate": "/api/{everything}",
+			"DownstreamScheme": "http",
+			"ServiceName": "order",
+			"LoadBalancerOptions": {
+				"Type": "LeastConnection"
+			},
+			"UpstreamPathTemplate": "/orders/api/{everything}"
+		},
+		{
+			"DownstreamPathTemplate": "/{everything}",
+			"UpstreamPathTemplate": "/orders-doc/{everything}",
+			"DownstreamScheme": "http",
+			"ServiceName": "order",
+			"LoadBalancerOptions": {
+				"Type": "LeastConnection"
+			}
+		}
+	],
+	"GlobalConfiguration": {
+		"BaseUrl": "http://localhost",
+		"ServiceDiscoveryProvider": {
+			"Host": "localhost",
+			"Port": 8500,
+			"Type": "Consul"
+		}
+	}
+}

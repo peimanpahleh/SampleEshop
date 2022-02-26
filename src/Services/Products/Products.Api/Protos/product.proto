@@ -1,0 +1,31 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "Products.Api";
+
+package product;
+
+
+
+service MyProductService {
+  // Sends a list of products
+  rpc GetProducts (ProductItemRequest) returns (ProductListResponse);
+
+}
+
+
+message ProductItemRequest {
+	string ids = 1;
+}
+
+message ProductItemResponse {
+	string id = 1;
+	string name = 2;
+	int64  price = 3;
+	string price_id = 4;
+	int32  quantity = 5;
+	string image_id = 6;
+}
+
+message ProductListResponse {
+	repeated ProductItemResponse product = 1;
+}

@@ -1,0 +1,10 @@
+apiVersion: v2
+name: app-orders
+description: A Helm chart for Kubernetes
+
+#  helm version
+type: application
+version: 0.1.0
+
+# image version
+appVersion: "1.0.1"

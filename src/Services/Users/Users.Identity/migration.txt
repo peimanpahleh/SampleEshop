@@ -1,0 +1,7 @@
+﻿dotnet ef migrations add Grants -c PersistedGrantDbContext -o Migrations/PersistedGrantDb
+dotnet ef migrations add Configuration -c ConfigurationDbContext -o Migrations/ConfigurationDb
+dotnet ef migrations add InitMig -c ApplicationDbContext -o Migrations/IdentityDb
+
+dotnet ef database drop -c PersistedGrantDbContext
+dotnet ef database drop -c ConfigurationDbContext
+dotnet ef database drop -c AppDbContext

@@ -1,0 +1,24 @@
+﻿global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Threading.Tasks;
+global using MediatR;
+global using Microsoft.Extensions.DependencyInjection;
+global using Orders.Application.Configuration.Commands;
+global using Orders.Application.Configuration.Queries;
+global using Orders.Domain.Orders;
+global using MongoDB.Driver;
+global using EventBus.Abstractions;
+global using EventBus.IntegrationEvents.Orders;
+global using EventBus.IntegrationEvents.OrderSaga;
+global using MassTransit;
+global using Microsoft.Extensions.Logging;
+global using EventBus.IntegrationEvents.Baskets;
+global using Orders.Application.Orders.Commands;
+global using Orders.Application.Models;
+global using Orders.Application.Models.Dto;
+global using Orders.Application.Models.Dto.User;
+global using Orders.Application.ReadSide;
+global using Orders.Application.Configuration.Services;
+global using Orders.Domain.SeedWork;
+

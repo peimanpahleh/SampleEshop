@@ -1,0 +1,101 @@
+﻿<!-- End Topbar -->
+<div class="middle-inner">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-2 col-md-2 col-12">
+				<!-- Logo -->
+				<div class="logo">
+					<a href="index.html"><img src="t/images/logo.png" alt="logo"></a>
+				</div>
+				<!--/ End Logo -->
+				<!-- Search Form -->
+				<div class="search-top">
+					<div class="top-search"><a href="#0"><i class="ti-search"></i></a></div>
+					<!-- Search Form -->
+					<div class="search-top">
+						<form class="search-form">
+							<input type="text" placeholder="Search here..." name="search">
+							<button value="search" type="submit"><i class="ti-search"></i></button>
+						</form>
+					</div>
+					<!--/ End Search Form -->
+				</div>
+				<!--/ End Search Form -->
+				<div class="mobile-nav"></div>
+			</div>
+			<div class="col-lg-8 col-md-7 col-12">
+				<div class="search-bar-top">
+					<div class="search-bar">
+						<select style="display: none;">
+							<option selected="selected">All Category</option>
+							<option>watch</option>
+							<option>mobile</option>
+							<option>kid’s item</option>
+						</select><div class="nice-select" tabindex="0"><span class="current">All Category</span><ul class="list"><li data-value="All Category" class="option selected focus">All Category</li><li data-value="watch" class="option">watch</li><li data-value="mobile" class="option">mobile</li><li data-value="kid’s item" class="option">kid’s item</li></ul></div>
+						<form>
+							<input name="search" placeholder="Search Products Here....." type="search">
+							<button class="btnn"><i class="ti-search"></i></button>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-2 col-md-3 col-12">
+				<div class="right-bar">
+					<!-- Search Form -->
+					<div class="sinlge-bar">
+						<a href="#" class="single-icon"><i class="fa fa-heart-o" aria-hidden="true"></i></a>
+					</div>
+					<div class="sinlge-bar">
+						<a href="#" class="single-icon"><i class="fa fa-user-circle-o" aria-hidden="true"></i></a>
+					</div>
+					<div class="sinlge-bar shopping">
+						<a href="#" class="single-icon"><i class="ti-bag"></i> <span class="total-count">@_basket.BasketItems.Count</span></a>
+						<!-- Shopping Item -->
+						<div class="shopping-item">
+							<div class="dropdown-cart-header">
+								<span>@_basket.BasketItems.Count Items</span>
+								<a href="#">View Cart</a>
+							</div>
+							<ul class="shopping-list">
+								@foreach (var item in _basket.BasketItems)
+								{
+									<li>
+									<a href="#" class="remove" title="Remove this item"><i class="fa fa-remove"></i></a>
+									<a class="cart-img" href="#"><img src="@item.ImageId" alt="#"></a>
+									<h4><a href="#">@item.ProductName</a></h4>
+									<p class="quantity">@item.Quantity x - <span class="amount">$@item.UnitPrice</span></p>
+								</li>
+								}
+							</ul>
+							<div class="bottom">
+								<div class="total">
+									<span>Total</span>
+									<span class="total-amount">$134.00</span>
+								</div>
+								<a href="checkout.html" class="btn animate">Checkout</a>
+							</div>
+						</div>
+						<!--/ End Shopping Item -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@code{
+	private BasketDto _basket = new();
+
+	protected override void OnInitialized()
+	{
+		var randon = new Random();
+		/*for (var i = 1; i <= 5; i++)
+		{
+			var quantity = randon.Next(10,1000);
+			var price = randon.Next(10,100);
+			var product = new BasketDto($"p{i}",$"p{i}",quantity,price,"img/abc.png");
+			_basket.Add(product);
+		}*/
+		base.OnInitialized();
+	}
+}

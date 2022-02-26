@@ -1,0 +1,49 @@
+﻿@page "/admin/products/{Id}"
+
+@layout PanelLayout
+
+<h3>Details</h3>
+
+<br/>
+
+
+<RadzenCard class="m-3">
+	<h2>AddProduct</h2>
+
+	<div class="d-flex flex-row">
+		<div class="row">
+	<div class="col-md-3">
+		<RadzenLabel Component="ProductName" Text="Product name" class="form-label" />
+				<RadzenTextBox Name="ProductName" @bind-Value=@model.Name class="form-control" ReadOnly />
+	</div>
+
+	<div class="col-md-3">
+			<RadzenLabel Component="ProductPrice" Text="Product price" class="form-label" />
+				<RadzenTextBox Name="ProductPrice" Value=@model.Price.ToString() class="form-control" ReadOnly />
+	</div>
+
+	<div class="col-md-3">
+		<RadzenLabel Component="ProductQuantity" Text="Product Quantity" class="form-label" />
+				<RadzenTextBox Name="ProductQuantity" Value=@model.Quantity.ToString() class="form-control" ReadOnly />
+	</div>
+</div>
+
+	</div>
+</RadzenCard>
+
+@code{
+
+	[Parameter] public string Id { get; set; }
+
+	private AdminProductDto model = new();
+
+
+	protected override void OnInitialized()
+	{
+		model.Name = "p01";
+		model.Quantity = 10;
+		model.Price = 25;
+		model.ImageId = "abcdf";
+	}
+
+}

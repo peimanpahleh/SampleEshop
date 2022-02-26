@@ -1,0 +1,6 @@
+dependencies:
+- name: app-orders
+  repository: file://../app-orders
+  version: 0.1.0
+digest: sha256:fab31dea878ffc5a683add5e7d31ec162a575b79e26e136169623cb22ea23272
+generated: "2022-02-03T12:00:03.0321199+03:30"

@@ -1,0 +1,84 @@
+﻿@page "/admin/orders"
+@layout PanelLayout
+
+@inject NavigationManager NavigationManager
+@inject IOrderService OrderService
+
+<h1>Orders</h1>
+
+
+<div class="row">
+	<div class="col-10">
+		<RadzenDataGrid Data="@_orders.Result" TItem="AdminAllOrdersDto">
+			<Columns>
+				<RadzenDataGridColumn Width="50px" TItem="AdminAllOrdersDto" Title="#" TextAlign="TextAlign.Center">
+					<Template Context="data">
+						@(_orders.Result.IndexOf(data) + 1)
+					</Template>
+				</RadzenDataGridColumn>
+
+				<RadzenDataGridColumn Width="160px" TItem="AdminAllOrdersDto" Property="OrderId" Title="OrderId" TextAlign="TextAlign.Center" />
+
+				<RadzenDataGridColumn Width="160px" TItem="AdminAllOrdersDto" Property="BuyerName" Title="BuyerName" TextAlign="TextAlign.Center" />
+
+				<RadzenDataGridColumn Width="160px" TItem="AdminAllOrdersDto" Property="TotalPrice" Title="TotalPrice" TextAlign="TextAlign.Center" />
+				<RadzenDataGridColumn Width="160px" TItem="AdminAllOrdersDto" Property="TotalItems" Title="TotalItems" TextAlign="TextAlign.Center" />
+				<RadzenDataGridColumn Width="160px" TItem="AdminAllOrdersDto" Property="Status" Title="Status" TextAlign="TextAlign.Center" />
+
+				<RadzenDataGridColumn Width="160px" TItem="AdminAllOrdersDto" Property="OrderId" Title="Operation" TextAlign="TextAlign.Center">
+					<Template Context="data">
+						<RadzenButton ButtonStyle="ButtonStyle.Info" Icon="info" Class="m-1" Text="Details" Click=@(args => OpenDetail(data.OrderId)) />
+					</Template>
+				</RadzenDataGridColumn>
+
+			</Columns>
+		</RadzenDataGrid>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-10">
+		<RadzenPager Count="@_totalItems" PageSize="@parameter.PageSize" PageNumbersCount="5" PageChanged="@PageChanged" />
+
+	</div>
+</div>
+
+@code {
+
+	private PagedList<AdminAllOrdersDto> _orders = new PagedList<AdminAllOrdersDto>();
+
+
+	PageParameter parameter = new PageParameter()
+		{
+			PageIndex = 1,
+			PageSize = 10
+		};
+
+	private int _totalItems { get; set; } = 20;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		_orders = await OrderService.AdminGetAllAsync(parameter,null);
+		_totalItems = (int)_orders.TotalItems;
+	}
+
+	private async void PageChanged(PagerEventArgs args)
+	{
+		Console.WriteLine($"page Index{args.PageIndex}  {args.Skip} {args.Top}");
+		parameter.PageIndex = args.PageIndex + 1;
+		_orders = await OrderService.AdminGetAllAsync(parameter,null);
+
+		StateHasChanged();
+
+	}
+
+	private void OpenDetail(string id)
+	{
+		Console.WriteLine($"OpenDetail {id}");
+
+		NavigationManager.NavigateTo($"admin/orders/{id}");
+	}
+
+
+}

@@ -1,0 +1,89 @@
+﻿
+@inject Radzen.DialogService dialogService
+@inject IProductService productService
+
+<RadzenCard class="m-3">
+	<h2>AddProduct</h2>
+
+	<div class="d-flex flex-row">
+
+		<RadzenTemplateForm TItem="AdminAddProductDto" Data=@model Submit=@OnSubmit class="mb-3">
+
+			<div class="mb-3">
+				<InputFile Name="ProductName" OnChange="@LoadFiles" />
+			</div>
+
+			<div class="mb-3">
+				<RadzenLabel Component="ProductName" Text="Product name" class="form-label" />
+				<RadzenTextBox Name="ProductName" @bind-Value=@model.Name class="form-control" />
+				<RadzenRequiredValidator Component="ProductName" Text="product name is required!" />
+			</div>
+
+			<div class="mb-3">
+				<RadzenLabel Component="ProductPrice" Text="Product price" class="form-label" />
+				<RadzenNumeric Name="ProductPrice" TValue="decimal" Placeholder="1.0" Step="0.5" Change=@(args => OnPriceChange(args)) class="form-control w-100" />
+				<RadzenRequiredValidator Component="ProductPrice" Text="product price is required!" />
+			</div>
+
+			<div class="mb-3">
+				<RadzenLabel Component="ProductQuantity" Text="Product Quantity" class="form-label" />
+				<RadzenNumeric Name="ProductQuantity" TValue="int" Placeholder="1" Step="1" Change=@(args => OnQuantityChange(args)) class="form-control w-100" />
+				<RadzenRequiredValidator Component="ProductQuantity" Text="product Quantity is required!" />
+			</div>
+
+			<div class="row">
+				<div class="col-md-12 text-right">
+					<RadzenButton Click="@((args) => dialogService.Close(false))" ButtonType="ButtonType.Button" ButtonStyle="ButtonStyle.Secondary" Text="Cancel" Style="width: 120px" Class="mr-1" />
+					<RadzenButton ButtonType="ButtonType.Submit" Text="Save" Style="width: 120px" />
+				</div>
+			</div>
+
+		</RadzenTemplateForm>
+	</div>
+</RadzenCard>
+
+
+
+@code {
+
+	private AdminAddProductDto model = new AdminAddProductDto();
+
+	protected override void OnInitialized()
+	{
+		model.Price = 1;
+		model.Quantity = 1;
+	}
+
+	private  async Task OnSubmit()
+	{
+		var res = await productService.AdminAddProduct(model);   
+
+		Console.WriteLine($"uploadImage: code:{res.Code} id:{res.Id} msg:{res.Msg}");
+
+		if (res.Code == 200 && res.Id != null)
+			dialogService.Close(true);
+
+	}
+
+	private void OnPriceChange(decimal value)
+	{
+		model.Price = value;
+	}
+
+	private void OnQuantityChange(int value)
+	{
+		model.Quantity = value;
+	}
+
+	private async Task LoadFiles(InputFileChangeEventArgs e)
+	{
+		var res = await productService.AdminAddImage(e.File);
+
+		Console.WriteLine($"uploadImage: code:{res.Code} id:{res.Id} msg:{res.Msg}");
+
+		if (res.Code == 200 && res.Id != null)
+			model.ImageId = res.Id;
+
+	}
+
+}

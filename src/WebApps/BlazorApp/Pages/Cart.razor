@@ -1,0 +1,155 @@
+﻿@page "/cart"
+
+
+@inject IBasketService BasketService
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AllBar/>
+
+<div class="shopping-cart section">
+		<div class="container">
+			<div class="row">
+				<div class="col-12">
+					<!-- Shopping Summery -->
+					<table class="table shopping-summery">
+						<thead>
+							<tr class="main-hading">
+								<th>PRODUCT</th>
+								<th>NAME</th>
+								<th class="text-center">UNIT PRICE</th>
+								<th class="text-center">QUANTITY</th>
+								<th class="text-center">TOTAL</th> 
+								<th class="text-center"><i class="ti-trash remove-icon"></i></th>
+							</tr>
+						</thead>
+						<tbody>
+						@foreach (var item in _basket.BasketItems)
+						{
+							<tr>
+								<td class="image" data-title="No"><img src="@GetImage(item.ImageId)" alt="#"></td>
+								<td class="product-des" data-title="Description">
+									<p class="product-name"><a href="#">@item.ProductName</a></p>
+									<p class="product-des">Maboriosam in a tonto nesciung eget  distingy magndapibus.</p>
+								</td>
+								<td class="price" data-title="Price"><span>$@item.UnitPrice </span></td>
+								<td class="qty" data-title="Qty"><!-- Input Order -->
+									<div class="input-group">
+										<div class="button minus">
+											<button type="button" class="btn btn-primary btn-number" data-type="minus" data-field="quant[1]">
+												<i class="ti-minus"></i>
+											</button>
+										</div>
+										<input type="text" name="quant[1]" class="input-number" data-min="1" data-max="100" value="@item.Quantity">
+										<div class="button plus">
+											<button type="button" class="btn btn-primary btn-number" data-type="plus" data-field="quant[1]">
+												<i class="ti-plus"></i>
+											</button>
+										</div>
+									</div>
+									<!--/ End Input Order -->
+								</td>
+								<td class="total-amount" data-title="Total"><span>$ @GetItemTotal(item.Id)</span></td>
+								<td class="action" data-title="Remove"><a href="#" @onclick="() => RemoveFromBasket(item.Id)"><i class="ti-trash remove-icon"></i></a></td>
+							</tr>
+						}
+						</tbody>
+					</table>
+					<!--/ End Shopping Summery -->
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-12">
+					<!-- Total Amount -->
+					<div class="total-amount">
+						<div class="row">
+							<div class="col-lg-8 col-md-5 col-12">
+								<div class="left">
+								</div>
+							</div>
+							<div class="col-lg-4 col-md-7 col-12">
+								<div class="right">
+									<ul>
+										<li>Cart Subtotal<span>$ @GetBasketTotal()</span></li>
+										<li>Shipping<span>Free</span></li>
+										<li>You Save<span>$0.00</span></li>
+										<li class="last">You Pay<span>$ @GetBasketTotal()</span></li>
+									</ul>
+									<div class="button5">
+										<a href="checkout" class="btn">Checkout</a>
+										<a href="/" class="btn">Continue shopping</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--/ End Total Amount -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+@code{
+
+	private BasketDto _basket = new();
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		var isAuthenticated = await CheckAuth();
+
+		Console.WriteLine($"isAuthenticated:{isAuthenticated}");
+
+		if (isAuthenticated)
+		{
+			_basket = await BasketService.GetBasketAsync();
+
+			Console.WriteLine($"items:{_basket.BasketItems.Count}");
+		}
+	}
+
+	private async Task<bool> CheckAuth()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (user == null)
+			return false;
+
+		if (user.Identity.IsAuthenticated)
+			return true;
+
+		return false;
+	}
+
+	private string GetImage(string id)
+	{
+		var imgUrl = "http://localhost:5020/products/api/Images/";
+		return imgUrl + id;
+	}
+
+	private long GetBasketTotal()
+	{		
+		return _basket.BasketItems.Sum(x => (long)x.UnitPrice * x.Quantity);
+	}
+
+	private long GetItemTotal(string id)
+	{		
+		var basket = _basket.BasketItems.First(x => x.Id == id);
+
+		return (long)basket.UnitPrice * basket.Quantity;
+	}
+
+	private async Task RemoveFromBasket(string id)
+	{
+		var res = await BasketService.DeleteBasketItemAsync(id);
+		Console.WriteLine($"res delete is:{res}");
+		if (res)
+		{
+			_basket = await BasketService.GetBasketAsync();
+			StateHasChanged();
+		}
+	}
+
+}

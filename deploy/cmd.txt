@@ -1,0 +1,2 @@
+helm dep build . --skip-refresh 
+helm dep update . --skip-refresh 

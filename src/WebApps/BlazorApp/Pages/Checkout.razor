@@ -1,0 +1,130 @@
+﻿@page "/checkout"
+
+@inject NavigationManager NavigationManager
+@inject IBasketService BasketService
+@inject NavigationManager Navigation
+@inject SignOutSessionStateManager SignOutManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<AllBar />
+
+<div class="breadcrumbs">
+	<div class="container">
+		<div class="row">
+			<div class="col-12">
+				<div class="bread-inner">
+					<ul class="bread-list">
+						<li><a href="/">Home<i class="ti-arrow-right"></i></a></li>
+						<li class="active"><a href="#">Checkout</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<section class="shop checkout section">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-4 col-12">
+				<div class="order-details">
+					<!-- Order Widget -->
+					<div class="single-widget">
+						<h2>CART  TOTALS</h2>
+						<div class="content">
+							<ul>
+								<li>Sub Total<span>$ @_totalPrice</span></li>
+								<li>(+) Shipping<span>$ @_shipping</span></li>
+								<li class="last">Total<span>$ @GetTotal()</span></li>
+							</ul>
+						</div>
+					</div>
+					<!--/ End Order Widget -->
+					<!-- Order Widget -->
+					<div class="single-widget">
+						<h2>Payments</h2>
+					</div>
+					<!--/ End Order Widget -->
+					<!-- Payment Method Widget -->
+					<div class="single-widget payement">
+						<div class="content">
+							<img src="t/images/payment-method.png" alt="#">
+						</div>
+					</div>
+					<!--/ End Payment Method Widget -->
+					<!-- Button Widget -->
+					<div class="single-widget get-button">
+						<div class="content">
+							<button class="btn" @onclick="CheckoutOrder12">
+								proceed to checkout
+							</button>
+						</div>
+					</div>
+					<!--/ End Button Widget -->
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+@code {
+
+	private long _totalPrice = 0;
+	private long _shipping = 0;
+
+	private BasketDto _basket = new();
+
+
+	private long GetTotal()
+	{
+		return _totalPrice + _shipping;
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		var isAuthenticated = await CheckAuth();
+
+		Console.WriteLine($"isAuthenticated:{isAuthenticated}");
+
+		if (isAuthenticated)
+		{
+			_basket = await BasketService.GetBasketAsync();
+
+			Console.WriteLine($"items:{_basket.BasketItems.Count}");
+
+			_totalPrice = GetBasketTotal();
+		}
+	}
+
+	private long GetBasketTotal()
+	{
+		return _basket.BasketItems.Sum(x => (long)x.UnitPrice * x.Quantity);
+		//StateHasChanged();
+	}
+
+	private async Task<bool> CheckAuth()
+	{
+		var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+		var user = authState.User;
+
+		if (user == null)
+			return false;
+
+		if (user.Identity.IsAuthenticated)
+			return true;
+
+		return false;
+	}
+
+	private async Task CheckoutOrder12()
+	{
+		Console.WriteLine("checkout cliced");
+
+		var res = await BasketService.CheckoutBasketAsync();
+
+		if (res.Code == 200)
+			NavigationManager.NavigateTo("/");
+
+
+	}
+}

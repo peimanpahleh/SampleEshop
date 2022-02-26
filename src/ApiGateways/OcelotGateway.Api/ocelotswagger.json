@@ -1,0 +1,24 @@
+{
+	"OcelotSwaggerOptions": {
+		"SwaggerReplaces": [
+			{
+				"DownstreamPathRouteRegex": "\\/api\\/",
+				"UpstreamPathRouteRegex": "\\/(.*?)\\-doc\\/"
+			}
+		],
+		"SwaggerEndpoints": [
+			{
+				"Name": "product api",
+				"Url": "/products-doc/swagger/v1/swagger.json"
+			},
+			{
+				"Name": "basket api",
+				"Url": "/baskets-doc/swagger/v1/swagger.json"
+			},
+			{
+				"Name": "order api",
+				"Url": "/orders-doc/swagger/v1/swagger.json"
+			}
+		]
+	}
+}

@@ -1,0 +1,77 @@
+﻿@inherits LayoutComponentBase
+
+@inject NavigationManager UriHelpe
+@inject DialogService DialogService
+@inject TooltipService TooltipService
+@inject ContextMenuService ContextMenuService
+@inject NotificationService NotificationService
+
+<RadzenDialog />
+<RadzenNotification />
+<RadzenTooltip />
+<RadzenContextMenu />
+
+<RadzenLayout>
+	<ChildContent>
+		<RadzenHeader>
+			<ChildContent>
+				<div class="row justify-content-start align-items-center">
+					<div class="col-6 d-flex align-items-center">
+						<RadzenSidebarToggle Click="@SidebarToggle0Click">
+						</RadzenSidebarToggle>
+						<RadzenLabel Text="Eshop">
+						</RadzenLabel>
+					</div>
+					<div class="col-6 text-right">
+						<LoginDisplay/>
+					</div>
+				</div>
+			</ChildContent>
+		</RadzenHeader>
+		<RadzenBody @ref="body0">
+			<ChildContent>
+				<RadzenContentContainer Name="main">
+					@Body
+				</RadzenContentContainer>
+			</ChildContent>
+		</RadzenBody>
+		<RadzenSidebar @ref="sidebar0">
+			<ChildContent>
+				<RadzenPanelMenu style="height: 100%">
+					<ChildContent>
+						<RadzenPanelMenuItem Text="Home" Path="/admin">
+						</RadzenPanelMenuItem>
+
+						<RadzenPanelMenuItem Text="Product" Path="/admin/products">
+						</RadzenPanelMenuItem>
+
+						<RadzenPanelMenuItem Text="Order" Path="/admin/orders">
+						</RadzenPanelMenuItem>
+
+					</ChildContent>
+				</RadzenPanelMenu>
+			</ChildContent>
+		</RadzenSidebar>
+		<RadzenFooter>
+			<ChildContent>
+				<RadzenLabel Text="Eshop, Copyright Ⓒ 2022">
+				</RadzenLabel>
+			</ChildContent>
+		</RadzenFooter>
+	</ChildContent>
+</RadzenLayout>
+
+@code {
+
+	protected RadzenBody body0;
+	protected RadzenSidebar sidebar0;
+
+	protected async Task SidebarToggle0Click(dynamic args)
+	{
+		await InvokeAsync(() => { sidebar0.Toggle(); });
+
+		await InvokeAsync(() => { body0.Toggle(); });
+	}
+}
+
+

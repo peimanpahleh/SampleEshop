@@ -1,0 +1,17 @@
+﻿global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Threading.Tasks;
+global using Baskets.Domain.Baskets;
+global using Microsoft.Extensions.Logging;
+global using StackExchange.Redis;
+global using System.Text.Json;
+global using Baskets.Infrastructure.Persistence;
+global using Microsoft.Extensions.Configuration;
+global using Microsoft.Extensions.DependencyInjection;
+global using Baskets.Application.Configuration.Services;
+global using Microsoft.AspNetCore.Http;
+global using Baskets.Infrastructure.Services;
+global using Consul;
+global using System.Net;
+global using System.Text;

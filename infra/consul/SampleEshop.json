@@ -1,0 +1,58 @@
+{
+  "IdentityUrl": "https://localhost:7278",
+  "MongoDbConnection": "mongodb://root:Pass123@127.0.0.1:27017",
+  "Consul": "http://127.0.0.1:8500",
+  "GprcUrls": {
+    "ProductUrl": "https://localhost:5011"
+  },
+  "MassTransitSettings": {
+    "RabbitmqHost": "localhost",
+    "RabbitmqVirtualHost": "/",
+    "RabbitmqUsername": "guest",
+    "RabbitmqPassword": "guest"
+  },
+  "ProductSettings": {
+    "MongoStoreDatabase": {
+      "DatabaseName": "myeshop-product",
+      "ProductCollectionName": "products",
+      "ImageCollectionName": "images"
+    },
+    "ConsulSettings": {
+      "Address": "localhost",
+      "Name": "product",
+      "Port": 5010,
+      "Ping": "ping",
+      "GrpcPort": 5011
+    }
+  },
+  "BasketSettings": {
+    "RedisConnection": "127.0.0.1",
+    "ConsulSettings": {
+      "Address": "localhost",
+      "Name": "basket",
+      "Port": 5012,
+      "Ping": "ping",
+      "GrpcPort": 0
+    }
+  },
+  "IdentitySettings": {
+    "PsqlConnection": "User ID=postgres;Password=Pass@word;Host=127.0.0.1;Port=5432;Database=myeshop-identity2;"
+  },
+  "OrderSettings": {
+    "MongoStoreDatabase": {
+      "DatabaseName": "myeshop-orders",
+      "BuyerCollectionName": "buyers",
+      "OrderCollectionName": "orders"
+    },
+    "ConsulSettings": {
+      "Address": "localhost",
+      "Name": "order",
+      "Port": 5014,
+      "Ping": "ping",
+      "GrpcPort": 0
+    }
+  },
+  "SagaSettings": {
+    "SagaCollectionName": "mtsaga-orderdb"
+  }
+}

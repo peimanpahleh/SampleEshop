@@ -1,0 +1,12 @@
+﻿global using MediatR;
+global using Serilog;
+global using Serilog.Enrichers.Span;
+global using Serilog.Sinks.SystemConsole.Themes;
+global using Microsoft.AspNetCore.Mvc;
+global using Microsoft.AspNetCore.Authentication.JwtBearer;
+global using System.IdentityModel.Tokens.Jwt;
+global using Microsoft.AspNetCore.Authorization;
+global using EventBus;
+global using EventBus.Abstractions;
+global using MassTransit;
+global using EventBus.Configurations;
