@@ -80,4 +80,4 @@ jobs:
           context: .
           file: ./src/Services/Baskets/Baskets.Api/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/eshop-basket:$GITVERSION_SEMVER
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/eshop-basket:${{ GITVERSION_SEMVER }}
