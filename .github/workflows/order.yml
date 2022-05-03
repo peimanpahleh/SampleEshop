@@ -1,0 +1,46 @@
+name: order
+
+on:
+  push:
+    branches: [release/order]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name:  Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v0.9.7
+        with:
+          versionSpec: '5.5.0'
+      - name: Determine GitVersion
+        id:   gitversion
+        uses: gittools/actions/gitversion/execute@v0.9.7
+        with:
+          useConfigFile: true
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 6.0.x
+      - name: Restore dependencies
+        run: dotnet restore ./src/Services/Orders/Orders.Api/Orders.Api.csproj
+      - name: Build
+        run: dotnet build ./src/Services/Orders/Orders.Api/Orders.Api.csproj --no-restore
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ./src/Services/Orders/
+          file: ./src/Services/Orders/Orders.Api/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/eshop-order:${{ steps.gitversion.outputs.semVer }}
