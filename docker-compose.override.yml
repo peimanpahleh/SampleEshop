@@ -1,0 +1,120 @@
+version: '3.4'
+
+services:
+
+  users-identity:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - IdentityUrl=http://users-identity:80
+      - ConsulCfg=true
+      - ConsulKey=SampleEshop
+      - VaultCfg=false
+      - ServiceSettings__Consul=http://consul-server:8500
+    ports:
+      - "80"
+      - "7278:443"
+    #command: dotnet /seed
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./infra/certs:/root/.aspnet/https:ro
+      #- ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+        - postgresql
+
+  products-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=https://+:443;http://+:80
+      - ConsulCfg=true
+      - ConsulKey=SampleEshop
+      - VaultCfg=false
+      - ServiceSettings__Consul=http://consul-server:8500
+    ports:
+      - "5010:80"
+      - "5011:443"
+    command: dotnet /seed
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+      - ./infra/certs:/root/.aspnet/https:ro
+      #- ${APPDATA}/ASP.NET/Https:/root/.aspnet/https:ro
+    depends_on:
+        - users-identity
+        - mongodb-primary
+        - rabbitmq    
+
+
+  baskets-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConsulCfg=true
+      - ConsulKey=SampleEshop
+      - VaultCfg=false
+      - ServiceSettings__Consul=http://consul-server:8500
+    ports:
+      - "5012:80"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/root/.microsoft/usersecrets:ro
+    depends_on:
+        - users-identity
+        - products-api
+        - mongodb-primary
+        - rabbitmq
+
+  orders-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConsulCfg=true
+      - ConsulKey=SampleEshop
+      - VaultCfg=false
+      - ServiceSettings__Consul=http://consul-server:8500
+    ports:
+      - "5014:80"
+    depends_on:
+        - users-identity
+        - products-api
+        - baskets-api
+        - orders-saga
+        - payments-api
+        - mongodb-primary
+        - rabbitmq
+
+  orders-saga:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConsulCfg=true
+      - ConsulKey=SampleEshop
+      - VaultCfg=false
+      - ServiceSettings__Consul=http://consul-server:8500
+    depends_on:
+        - mongodb-primary
+        - rabbitmq
+
+
+  payments-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - ConsulCfg=true
+      - ConsulKey=SampleEshop
+      - VaultCfg=false
+      - ServiceSettings__Consul=http://consul-server:8500
+    ports:
+      - "5016:80"
+    depends_on:
+        - rabbitmq
+
+  ocelotgateway-api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80
+      - UseConsul=true
+      - Consul=http://consul-server:8500
+    ports:
+      - "5020:80"
+    depends_on:
+        - rabbitmq
+
+
