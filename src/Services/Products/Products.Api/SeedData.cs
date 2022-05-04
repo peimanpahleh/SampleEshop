@@ -36,6 +36,10 @@ public static class SeedData
                     continue;
                 }
 
+                var findProdcut = FindProduct(productCollection, name);
+                if (findProdcut)
+                    continue;
+
                 var fileBytes = File.ReadAllBytes(filePath);
                 var image = new Image(fileBytes, "image/png", fileBytes.LongLength);
                 var imageId = AddImage(imageCollection, image);
@@ -69,5 +73,11 @@ public static class SeedData
         var prodcut = new Product(name, quantity, price, imageId);
         prodcutCollection.InsertOne(prodcut);
         return prodcut.Id;
+    }
+
+    private static bool FindProduct(IMongoCollection<Product> prodcutCollection, string name)
+    {
+        var findProduct = prodcutCollection.Find(x => x.Name == name).Any();
+        return findProduct;
     }
 }

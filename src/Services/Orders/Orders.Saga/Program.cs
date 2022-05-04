@@ -2,6 +2,7 @@
 using Serilog;
 using Serilog.Enrichers.Span;
 using Serilog.Sinks.SystemConsole.Themes;
+//using Serilog.Sinks.SystemConsole.Themes;
 
 Microsoft.Extensions.Hosting.IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((hostContext, services) =>
