@@ -1,8 +1,8 @@
-name: basket
+name: order-saga
 
 on:
   push:
-    branches: [release/basket]
+    branches: [release/order-saga]
 
 jobs:
   build:
@@ -27,9 +27,9 @@ jobs:
         with:
           dotnet-version: 6.0.x
       - name: Restore dependencies
-        run: dotnet restore ./src/Services/Baskets/Baskets.Api/Baskets.Api.csproj
+        run: dotnet restore ./src/Services/Orders/Orders.Saga/Orders.Saga.csproj
       - name: Build
-        run: dotnet build ./src/Services/Baskets/Baskets.Api/Baskets.Api.csproj --no-restore
+        run: dotnet build ./src/Services/Orders/Orders.Saga/Orders.Saga.csproj --no-restore
       - name: Login to Docker Hub
         uses: docker/login-action@v1
         with:
@@ -40,7 +40,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ./src/Services/Baskets/
-          file: ./src/Services/Baskets/Baskets.Api/Dockerfile
+          context: ./src/Services/Orders/
+          file: ./src/Services/Orders/Orders.Saga/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/eshop-basket:${{ steps.gitversion.outputs.semVer }}
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/eshop-order-saga:${{ steps.gitversion.outputs.semVer }}
