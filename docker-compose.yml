@@ -1,14 +1,52 @@
-version: "3.8"
+version: '3.4'
 
 services:
 
-  # mongo:
-  #   image: mongo
-  #   ports:
-  #     - 27017:27017
-  #   volumes:
-  #     - mongo:/data/db
+  users-identity:
+    image: ${DOCKER_REGISTRY-}usersidentity
+    build:
+      context: .
+      dockerfile: src/Services/Users/Users.Identity/Dockerfile.vs
 
+  products-api:
+    image: ${DOCKER_REGISTRY-}productsapi
+    build:
+      context: .
+      dockerfile: src/Services/Products/Products.Api/Dockerfile.vs
+
+
+  baskets-api:
+    image: ${DOCKER_REGISTRY-}basketsapi
+    build:
+      context: .
+      dockerfile: src/Services/Baskets/Baskets.Api/Dockerfile.vs
+
+
+  orders-api:
+    image: ${DOCKER_REGISTRY-}ordersapi
+    build:
+      context: .
+      dockerfile: src/Services/Orders/Orders.Api/Dockerfile.vs
+
+  orders-saga:
+    image: ${DOCKER_REGISTRY-}orderssaga
+    build:
+      context: .
+      dockerfile: src/Services/Orders/Orders.Saga/Dockerfile.vs
+
+  payments-api:
+    image: ${DOCKER_REGISTRY-}paymentsapi
+    build:
+      context: .
+      dockerfile: src/Services/Payments/Payments.Api/Dockerfile.vs
+
+  ocelotgateway-api:
+    image: ${DOCKER_REGISTRY-}ocelotgatewayapi
+    build:
+      context: .
+      dockerfile: src/ApiGateways/OcelotGateway.Api/Dockerfile.vs
+
+      
   mongodb-primary:
     image: 'bitnami/mongodb:4.4.11-debian-10-r0'
     ports:
@@ -19,13 +57,9 @@ services:
       - MONGODB_ROOT_PASSWORD=Pass123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
 
-    # volumes:
-    #   - 'mongodb_master_data:/bitnami'
 
   mongodb-secondary:
     image: 'bitnami/mongodb:4.4.11-debian-10-r0'
-    depends_on:
-      - mongodb-primary
     environment:
       - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
       - MONGODB_REPLICA_SET_MODE=secondary
@@ -33,11 +67,11 @@ services:
       - MONGODB_INITIAL_PRIMARY_PORT_NUMBER=27017
       - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=Pass123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    depends_on:
+      - mongodb-primary   
 
   mongodb-arbiter:
     image: 'bitnami/mongodb:4.4.11-debian-10-r0'
-    depends_on:
-      - mongodb-primary
     environment:
       - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
       - MONGODB_REPLICA_SET_MODE=arbiter
@@ -45,6 +79,19 @@ services:
       - MONGODB_INITIAL_PRIMARY_PORT_NUMBER=27017
       - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD=Pass123
       - MONGODB_REPLICA_SET_KEY=replicasetkey123
+    depends_on:
+      - mongodb-primary
+
+  consul-server:
+    image: consul
+    container_name: consul-server    
+    ports:
+      - "8500:8500"
+      - "8600:8600/tcp"
+      - "8600:8600/udp"
+    volumes:
+     - ./server.json:/consul/config/server.json:ro
+    command: "agent"
 
   postgresql:
     image: postgres:latest 
@@ -69,8 +116,9 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-      
+      - 15692:15692
+
 volumes:
-  # mongo:
+  mongo:
   postgredata:
   redis:

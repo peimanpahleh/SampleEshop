@@ -4,76 +4,75 @@ using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace OcelotGateway.Api
+namespace OcelotGateway.Api;
+
+public class OcelotSwaggerMiddleware
 {
-    public class OcelotSwaggerMiddleware
+    private readonly OcelotSwaggerOptions _options;
+
+    private readonly RequestDelegate _next;
+
+    public OcelotSwaggerMiddleware(
+        RequestDelegate next,
+        IOptionsMonitor<OcelotSwaggerOptions> optionsAccessor)
     {
-        private readonly OcelotSwaggerOptions _options;
+        _next = next;
+        _options = optionsAccessor.CurrentValue;
+    }
 
-        private readonly RequestDelegate _next;
+    public async Task InvokeAsync(HttpContext httpContext)
+    {
+        var path = httpContext.Request.Path.Value;
 
-        public OcelotSwaggerMiddleware(
-            RequestDelegate next,
-            IOptionsMonitor<OcelotSwaggerOptions> optionsAccessor)
+        if (path.IndexOf("/swagger") > -1)
         {
-            _next = next;
-            _options = optionsAccessor.CurrentValue;
-        }
+            var content = await ReadContentAsync(httpContext);
 
-        public async Task InvokeAsync(HttpContext httpContext)
-        {
-            var path = httpContext.Request.Path.Value;
-
-            if (path.IndexOf("/swagger") > -1)
+            foreach (var replace in _options.SwaggerReplaces)
             {
-                var content = await ReadContentAsync(httpContext);
+                Regex reg = new Regex(replace.UpstreamPathRouteRegex);
 
-                foreach (var replace in _options.SwaggerReplaces)
+                Match match = reg.Match(path);
+
+                if (match.Success)
                 {
-                    Regex reg = new Regex(replace.UpstreamPathRouteRegex);
+                    string value = match.Groups[1].Value;
 
-                    Match match = reg.Match(path);
-
-                    if (match.Success)
-                    {
-                        string value = match.Groups[1].Value;
-
-                        content = Regex.Replace(content, replace.DownstreamPathRouteRegex, $"/{value}/");
-                    }
+                    content = Regex.Replace(content, replace.DownstreamPathRouteRegex, $"/{value}/");
                 }
+            }
 
-                await WriteContentAsync(httpContext, content);
-            }
-            else
-            {
-                await _next(httpContext);
-            }
+            await WriteContentAsync(httpContext, content);
         }
-
-        private async Task<string> ReadContentAsync([NotNull] HttpContext httpContext)
+        else
         {
-            var existingBody = httpContext.Response.Body;
-            using (var newBody = new MemoryStream())
-            {
-                // We set the response body to our stream so we can read after the chain of middlewares have been called.
-                httpContext.Response.Body = newBody;
-
-                await _next(httpContext);
-
-                // Reset the body so nothing from the latter middlewares goes to the output.
-                httpContext.Response.Body = existingBody;
-
-                newBody.Seek(0, SeekOrigin.Begin);
-                var newContent = await new StreamReader(newBody).ReadToEndAsync();
-
-                return newContent;
-            }
+            await _next(httpContext);
         }
+    }
 
-        private async Task WriteContentAsync([NotNull] HttpContext httpContext, string content)
+    private async Task<string> ReadContentAsync([NotNull] HttpContext httpContext)
+    {
+        var existingBody = httpContext.Response.Body;
+        using (var newBody = new MemoryStream())
         {
-            httpContext.Response.ContentLength = Encoding.UTF8.GetByteCount(content);
-            await httpContext.Response.WriteAsync(content);
+            // We set the response body to our stream so we can read after the chain of middlewares have been called.
+            httpContext.Response.Body = newBody;
+
+            await _next(httpContext);
+
+            // Reset the body so nothing from the latter middlewares goes to the output.
+            httpContext.Response.Body = existingBody;
+
+            newBody.Seek(0, SeekOrigin.Begin);
+            var newContent = await new StreamReader(newBody).ReadToEndAsync();
+
+            return newContent;
         }
+    }
+
+    private async Task WriteContentAsync([NotNull] HttpContext httpContext, string content)
+    {
+        httpContext.Response.ContentLength = Encoding.UTF8.GetByteCount(content);
+        await httpContext.Response.WriteAsync(content);
     }
 }
