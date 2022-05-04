@@ -1,12 +1,12 @@
 {
-  "IdentityUrl": "https://localhost:7278",
-  "MongoDbConnection": "mongodb://root:Pass123@127.0.0.1:27017",
-  "Consul": "http://127.0.0.1:8500",
+  "IdentityUrl": "http://users-identity:80",
+  "MongoDbConnection": "mongodb://root:Pass123@mongodb-primary:27017",
+  "Consul": "http://consul-server:8500",
   "GprcUrls": {
-    "ProductUrl": "https://localhost:5011"
+    "ProductUrl": "https://products-api:443"
   },
   "MassTransitSettings": {
-    "RabbitmqHost": "localhost",
+    "RabbitmqHost": "rabbitmq",
     "RabbitmqVirtualHost": "/",
     "RabbitmqUsername": "guest",
     "RabbitmqPassword": "guest"
@@ -18,25 +18,25 @@
       "ImageCollectionName": "images"
     },
     "ConsulSettings": {
-      "Address": "localhost",
+      "Address": "products-api",
       "Name": "product",
-      "Port": 5010,
+      "Port": 80,
       "Ping": "ping",
-      "GrpcPort": 5011
+      "GrpcPort": 443
     }
   },
   "BasketSettings": {
-    "RedisConnection": "127.0.0.1",
+    "RedisConnection": "redis",
     "ConsulSettings": {
-      "Address": "localhost",
+      "Address": "baskets-api",
       "Name": "basket",
-      "Port": 5012,
+      "Port": 80,
       "Ping": "ping",
       "GrpcPort": 0
     }
   },
   "IdentitySettings": {
-    "PsqlConnection": "User ID=postgres;Password=Pass@word;Host=127.0.0.1;Port=5432;Database=myeshop-identity2;"
+    "PsqlConnection": "User ID=postgres;Password=Pass@word;Host=postgresql;Port=5432;Database=myeshop-identity2;"
   },
   "OrderSettings": {
     "MongoStoreDatabase": {
@@ -45,9 +45,9 @@
       "OrderCollectionName": "orders"
     },
     "ConsulSettings": {
-      "Address": "localhost",
+      "Address": "orders-api",
       "Name": "order",
-      "Port": 5014,
+      "Port": 80,
       "Ping": "ping",
       "GrpcPort": 0
     }
