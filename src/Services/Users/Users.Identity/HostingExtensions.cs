@@ -71,7 +71,7 @@ namespace Users.Identity
                     throw new InvalidOperationException("Consul config is null");
 
                 var strResponse = Encoding.UTF8.GetString(res.Response.Value);
-                Console.WriteLine(strResponse);
+                //Console.WriteLine(strResponse);
 
                 settings = JsonSerializer.Deserialize<ServiceSettings>(strResponse);
             }
