@@ -72,9 +72,12 @@ public static class HostingExtensions
             var logger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger<ConsulClient>();
 
             var consulClient = scope.ServiceProvider.GetRequiredService<IConsulClient>();
-            var settings = scope.ServiceProvider.GetRequiredService<IOptions<ServiceSettings>>();
 
-            var consulSettings = settings.Value.ProductSettings.ConsulSettings;
+            //var settings = scope.ServiceProvider.GetRequiredService<IOptions<ServiceSettings>>();
+            var settings = GetServiceSettings(app.Configuration);
+
+            //var consulSettings = settings.Value.ProductSettings.ConsulSettings;
+            var consulSettings = settings.ProductSettings.ConsulSettings;
 
             var uniqueId = Guid.NewGuid().ToString();
             var serviceId = $"{consulSettings.Name}_{consulSettings.Address}:{consulSettings.Port}_{uniqueId}";
